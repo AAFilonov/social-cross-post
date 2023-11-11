@@ -8,11 +8,11 @@ from datetime import datetime
 # Third-Party Libraries
 import pytz
 from PIL import Image
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for, flash, session
 from flask_session import Session  # if you're using flask-session
 from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_file
 from flask_cors import CORS
 from sqlalchemy import inspect
 
@@ -26,7 +26,7 @@ import configLog
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__,  static_folder='./crosspost-app/dist')
     app.config.from_object(Config)
     CORS(app)
     # Initialize db with app
@@ -71,13 +71,23 @@ def handle_bad_gateway_error(e):
     return "Bad Gateway", 502
 
 
-@app.route("/")
-def index():
+@app.route("/old/")
+def index_old():
     version = app.config["VERSION"]
     logger.info("Index page loaded")
     #if "logged_in" not in session:
     #    return redirect(url_for("login"))
     return render_template("index_old.html", version=version)
+
+@app.route("/")
+def index():
+    logger.info("Index page loaded")
+    return send_file("crosspost-app/dist/index.html")
+
+
+@app.route('/assets/<path:path>')
+def send_report(path):
+    return send_from_directory('./crosspost-app/dist/assets', path)
 
 
 @app.route("/old/login", methods=["GET", "POST"])
