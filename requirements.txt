@@ -1,0 +1,11 @@
+pytz
+Pillow
+Flask
+Flask-Session
+Flask-APScheduler
+Flask-SQLAlchemy
+atproto
+requests
+Mastodon.py
+tweepy
+requests-oauthlib
