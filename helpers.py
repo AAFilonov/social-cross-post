@@ -25,7 +25,6 @@ import configLog
 from extensions import db
 from models import ScheduledPosts
 
-from app import flask_app
 
 URL_PATTERN = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
@@ -219,7 +218,7 @@ def save_post_to_database(post_data):
         logger.info('Scheduled time is not provided. Posting immediately.')
 
 
-def send_scheduled_post(post_id):
+def send_scheduled_post(flask_app, post_id):
     logger.debug('send_scheduled_post function triggered')
 
     with flask_app.app_context():

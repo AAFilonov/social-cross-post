@@ -8,7 +8,16 @@ from datetime import datetime
 # Third-Party Libraries
 import pytz
 from PIL import Image
-from flask import Flask, render_template, request, redirect, send_from_directory, url_for, flash, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    send_from_directory,
+    url_for,
+    flash,
+    session,
+)
 from flask_session import Session  # if you're using flask-session
 from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
@@ -26,7 +35,7 @@ import configLog
 
 
 def create_app():
-    app = Flask(__name__,  static_folder='./crosspost-app/dist')
+    app = Flask(__name__, static_folder="./crosspost-app/dist")
     app.config.from_object(Config)
     CORS(app)
     # Initialize db with app
@@ -44,7 +53,6 @@ def create_app():
     return app
 
 
-
 app = create_app()
 flask_app = app
 
@@ -60,9 +68,11 @@ logger.debug("Scheduler initialized")
 scheduler.start()
 logger.debug("Scheduler started")
 
-@app.route('/ping', methods=['GET'])
+
+@app.route("/ping", methods=["GET"])
 def ping_pong():
-    return jsonify('pong!')
+    return "pong!"
+
 
 @app.errorhandler(502)
 def handle_bad_gateway_error(e):
@@ -75,9 +85,10 @@ def handle_bad_gateway_error(e):
 def index_old():
     version = app.config["VERSION"]
     logger.info("Index page loaded")
-    #if "logged_in" not in session:
+    # if "logged_in" not in session:
     #    return redirect(url_for("login"))
     return render_template("index_old.html", version=version)
+
 
 @app.route("/")
 def index():
@@ -85,9 +96,9 @@ def index():
     return send_file("crosspost-app/dist/index.html")
 
 
-@app.route('/assets/<path:path>')
+@app.route("/assets/<path:path>")
 def send_report(path):
-    return send_from_directory('./crosspost-app/dist/assets', path)
+    return send_from_directory("./crosspost-app/dist/assets", path)
 
 
 @app.route("/old/login", methods=["GET", "POST"])
@@ -109,11 +120,9 @@ def submit_form():
     )  # Replace 'Your_Timezone' with your desired timezone
 
     start_time = time.time()
-   
-    
-   
+
     scheduled_time = request.form.get("scheduleTime")
-    
+
     if scheduled_time:
         scheduled_time = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
         scheduled_time = timezone.localize(scheduled_time)
@@ -127,8 +136,6 @@ def submit_form():
     text = request.form["text"]
     text_html = "<br>".join(text.splitlines())  # Convert line breaks to <br> tags
 
-    
-    
     hashtag = request.form.get("hashtagCheckbox")  # get the value of hashtagCheckbox
     hashtag_text = request.form.get("hashtags")  # get the value of txt_hashtags
 
@@ -264,7 +271,7 @@ def submit_form():
             scheduler.add_job(
                 id=job_id,
                 func="helpers:send_scheduled_post",
-                args=[post.id],
+                args=[app, post.id],
                 trigger="date",
                 run_date=utc_dt,
             )
