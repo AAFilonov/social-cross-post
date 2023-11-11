@@ -1,4 +1,3 @@
-# Python Standard Library
 import os
 import time
 import inspect
@@ -12,7 +11,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_session import Session  # if you're using flask-session
 from flask_apscheduler import APScheduler
 from flask_sqlalchemy import SQLAlchemy
-from flask import g
+from flask import Flask, jsonify
+from flask_cors import CORS
 from sqlalchemy import inspect
 
 # Your Applications/Library specific modules
@@ -27,7 +27,7 @@ import configLog
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    CORS(app)
     # Initialize db with app
     db.init_app(app)
 
@@ -41,6 +41,7 @@ def create_app():
             print("ScheduledPosts table does not exist in the database.")
 
     return app
+
 
 
 app = create_app()
@@ -58,6 +59,9 @@ logger.debug("Scheduler initialized")
 scheduler.start()
 logger.debug("Scheduler started")
 
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
 
 @app.errorhandler(502)
 def handle_bad_gateway_error(e):
@@ -70,12 +74,12 @@ def handle_bad_gateway_error(e):
 def index():
     version = app.config["VERSION"]
     logger.info("Index page loaded")
-    if "logged_in" not in session:
-        return redirect(url_for("login"))
+    #if "logged_in" not in session:
+    #    return redirect(url_for("login"))
     return render_template("index.html", version=version)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/old/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         password = request.form.get("password")
@@ -87,7 +91,7 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/submit", methods=["POST"])
+@app.route("/old/submit", methods=["POST"])
 def submit_form():
     timezone = pytz.timezone(
         "Europe/Berlin"

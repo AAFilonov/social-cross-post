@@ -9,3 +9,4 @@ requests
 Mastodon.py
 tweepy
 requests-oauthlib
+flask_cors
