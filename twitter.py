@@ -9,7 +9,7 @@ import configLog
 logger, speed_logger = configLog.configure_logging()
 
 # Load Twitter credentials from config.json
-with open("config.json", "r") as file:
+with open("./config/config.json", "r") as file:
     twitter_config = json.load(file)
 
 # OAuth1 authentication

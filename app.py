@@ -1,3 +1,4 @@
+import json
 import os
 import time
 import inspect
@@ -76,7 +77,7 @@ def index():
     logger.info("Index page loaded")
     #if "logged_in" not in session:
     #    return redirect(url_for("login"))
-    return render_template("index.html", version=version)
+    return render_template("index_old.html", version=version)
 
 
 @app.route("/old/login", methods=["GET", "POST"])
@@ -91,15 +92,18 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/old/submit", methods=["POST"])
+@app.route("/submit", methods=["POST"])
 def submit_form():
     timezone = pytz.timezone(
         "Europe/Berlin"
     )  # Replace 'Your_Timezone' with your desired timezone
 
     start_time = time.time()
-
-    scheduled_time = request.form.get("scheduled_time")
+   
+    
+   
+    scheduled_time = request.form.get("scheduleTime")
+    
     if scheduled_time:
         scheduled_time = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
         scheduled_time = timezone.localize(scheduled_time)
@@ -112,10 +116,11 @@ def submit_form():
 
     text = request.form["text"]
     text_html = "<br>".join(text.splitlines())  # Convert line breaks to <br> tags
-    text_html = helpers.urls_to_html_links(text_html)  # Convert URLs to links
 
+    
+    
     hashtag = request.form.get("hashtagCheckbox")  # get the value of hashtagCheckbox
-    hashtag_text = request.form.get("txt_hashtags")  # get the value of txt_hashtags
+    hashtag_text = request.form.get("hashtags")  # get the value of txt_hashtags
 
     # Check if any images have been selected and if any of them have alt text
     files = request.files.getlist("files")
