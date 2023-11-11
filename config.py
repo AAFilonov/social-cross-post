@@ -4,7 +4,6 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
  
  # Open and read the config.json file
 with open('config.json', 'r') as file:
-        
     config_data = json.load(file)
     print(config_data)
     # Convert config_data into global variables
