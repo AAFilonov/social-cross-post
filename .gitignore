@@ -3,3 +3,4 @@ config.json
 speed.log
 config
 node_modules
+flask_session
